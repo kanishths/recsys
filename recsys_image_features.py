@@ -35,7 +35,7 @@ def extract_features_and_paths(data_path):
         features = extract_features(model, preprocessed_img)
         all_features.append(features)
         all_image_names.append(os.path.basename(img_path))
-        for feat in all_image_names:
+    for feat in all_image_names:
             print(feat)
     return all_features, all_image_names, model, image_paths_list
 
