@@ -79,9 +79,10 @@ def main():
         input_features, all_features, all_image_names =  dataset_creation(data_path)
         st.write("Dataset Created with ",len(all_image_names)," images")
         st.write("Select an image for recommendation:")
-        selected_image_path = st.selectbox("Select an image", all_image_names, on_change=lambda x: results(selected_image_path, input_features, all_features, all_image_names))
+        selected_image_path = st.selectbox("Select an image", all_image_names, on_change=lambda x: results(x, input_features, all_features, all_image_names))
         input_image_path = selected_image_path
         results(input_image_path, input_features, all_features, all_image_names)
+
 
         # result = recsys(input_image_path, input_features, all_features, all_image_names)
         # st.write("Displaying Images:")
