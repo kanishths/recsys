@@ -10,7 +10,7 @@ from tensorflow.keras.models import Model
 import numpy as np
 from scipy.spatial.distance import cosine
 
-@st.cache(allow_output_mutation=True)
+st.cache_data
 def extract_features_and_paths(data_path):
     extraction_dir = 'womenfashion'
     if not os.path.exists(extraction_dir):
