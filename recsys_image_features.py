@@ -12,14 +12,14 @@ from scipy.spatial.distance import cosine
 
 st.cache_data
 def extract_features_and_paths(data_path):
-    extraction_dir = 'womenfashion'
+    extraction_dir = 'women fashion'
     if not os.path.exists(extraction_dir):
         os.makedirs(extraction_dir)
 
     with ZipFile(data_path, 'r') as zip_ref:
         zip_ref.extractall(extraction_dir)
 
-    image_directory = os.path.join(extraction_dir, 'womenfashion')
+    image_directory = os.path.join(extraction_dir, 'women fashion')
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
