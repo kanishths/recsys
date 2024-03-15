@@ -6,20 +6,20 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
-# from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model
 import numpy as np
 from scipy.spatial.distance import cosine
 
 @st.cache(allow_output_mutation=True)
 def extract_features_and_paths(data_path):
-    extraction_dir = 'women_fashion'
+    extraction_dir = 'womenfashion'
     if not os.path.exists(extraction_dir):
         os.makedirs(extraction_dir)
 
     with ZipFile(data_path, 'r') as zip_ref:
         zip_ref.extractall(extraction_dir)
 
-    image_directory = os.path.join(extraction_dir, 'women fashion')
+    image_directory = os.path.join(extraction_dir, 'womenfashion')
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
