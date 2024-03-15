@@ -79,9 +79,9 @@ def main():
         st.write("Select an image for recommendation:")
         selected_image_path = st.selectbox("Select an image", image_paths_list)
         input_image_path = selected_image_path
-        print("inpitttt")
-        print(input_image_path)
-        recommend_fashion_items_resnet(input_image_path, all_features, all_image_names, model)
+        pathh = input_image_path[26:]
+        print(pathh)
+        recommend_fashion_items_resnet(pathh, all_features, all_image_names, model)
 
 if __name__ == "__main__":
     main()
