@@ -19,7 +19,7 @@ def extract_features_and_paths(data_path):
     with ZipFile(data_path, 'r') as zip_ref:
         zip_ref.extractall(extraction_dir)
 
-    image_directory = os.path.join(extraction_dir, 'women fashion')
+    image_directory = os.path.join(extraction_dir, '/women fashion')
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
