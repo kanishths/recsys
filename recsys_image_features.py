@@ -57,7 +57,6 @@ def recommend_fashion_items_resnet(input_image_path, all_features, all_image_nam
 
     similarities = [1 - cosine(input_features, other_feature) for other_feature in all_features]
     similar_indices = np.argsort(similarities)[-top_n:]
-    print(input_image_path)
     similar_indices = [idx for idx in similar_indices if idx != all_image_names.index(input_image_path)]
 
     st.image(input_image_path, caption="Input Image", use_column_width=True)
@@ -80,6 +79,8 @@ def main():
         st.write("Select an image for recommendation:")
         selected_image_path = st.selectbox("Select an image", image_paths_list)
         input_image_path = selected_image_path
+        print("inpitttt")
+        print(input_image_path)
         recommend_fashion_items_resnet(input_image_path, all_features, all_image_names, model)
 
 if __name__ == "__main__":
