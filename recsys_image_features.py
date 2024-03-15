@@ -1,57 +1,41 @@
-
-
+import streamlit as st
 from zipfile import ZipFile
 import os
 import glob
 from PIL import Image
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
-from tensorflow.keras.applications.vgg16 import preprocess_input
-from tensorflow.keras.models import Model
+from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
+# from tensorflow.keras.models import Model
 import numpy as np
 from scipy.spatial.distance import cosine
 
-data_path = '/content/women-fashion.zip'
-extraction_dir = 'women fashion'
-if not os.path.exists(extraction_dir):
-    os.makedirs(extraction_dir)
+@st.cache(allow_output_mutation=True)
+def extract_features_and_paths(data_path):
+    extraction_dir = 'women_fashion'
+    if not os.path.exists(extraction_dir):
+        os.makedirs(extraction_dir)
 
-with ZipFile(data_path, 'r') as zip_ref:
-    zip_ref.extractall(extraction_dir)
+    with ZipFile(data_path, 'r') as zip_ref:
+        zip_ref.extractall(extraction_dir)
 
-extracted_files = os.listdir(extraction_dir)
-print(extracted_files[:10])
+    image_directory = os.path.join(extraction_dir, 'women fashion')
 
-extraction_dir_updated = os.path.join(extraction_dir, 'women fashion')
+    image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
-# list the files in the updated directory
-extracted_files_updated = os.listdir(extraction_dir_updated)
-# extracted_files_updated[1:10], len(extracted_files_updated)
+    base_model = ResNet50(weights='imagenet', include_top=False)
+    model = Model(inputs=base_model.input, outputs=base_model.output)
 
-# function to load and display an image
-def display_image(file_path):
-    image = Image.open(file_path)
-    plt.imshow(image)
-    plt.axis('off')
-    plt.show()
+    all_features = []
+    all_image_names = []
 
-# display the first image to understand its characteristics
-first_image_path = os.path.join(extraction_dir_updated, extracted_files_updated[0])
-display_image(first_image_path)
+    for img_path in image_paths_list:
+        preprocessed_img = preprocess_image(img_path)
+        features = extract_features(model, preprocessed_img)
+        all_features.append(features)
+        all_image_names.append(os.path.basename(img_path))
 
-image_directory = 'women fashion/women fashion'
-
-image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
-
-# print the list of image file paths
-print(image_paths_list)
-
-
-from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
-
-base_model = ResNet50(weights='imagenet', include_top=False)
-model = Model(inputs=base_model.input, outputs=base_model.output)
+    return all_features, all_image_names, model, image_paths_list
 
 def preprocess_image(img_path):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -65,15 +49,6 @@ def extract_features(model, preprocessed_img):
     normalized_features = flattened_features / np.linalg.norm(flattened_features)
     return normalized_features
 
-all_features = []
-all_image_names = []
-
-for img_path in image_paths_list:
-    preprocessed_img = preprocess_image(img_path)
-    features = extract_features(model, preprocessed_img)
-    all_features.append(features)
-    all_image_names.append(os.path.basename(img_path))
-
 def recommend_fashion_items_resnet(input_image_path, all_features, all_image_names, model, top_n=5):
     preprocessed_img = preprocess_image(input_image_path)
     input_features = extract_features(model, preprocessed_img)
@@ -83,21 +58,26 @@ def recommend_fashion_items_resnet(input_image_path, all_features, all_image_nam
 
     similar_indices = [idx for idx in similar_indices if idx != all_image_names.index(input_image_path)]
 
-    plt.figure(figsize=(15, 10))
-    plt.subplot(1, top_n + 1, 1)
-    plt.imshow(Image.open(input_image_path))
-    plt.title("Input Image")
-    plt.axis('off')
+    st.image(input_image_path, caption="Input Image", use_column_width=True)
 
     for i, idx in enumerate(similar_indices[:top_n], start=1):
         image_path = os.path.join('', all_image_names[idx])
-        plt.subplot(1, top_n + 1, i + 1)
-        plt.imshow(Image.open(image_path))
-        plt.title(f"Recommendation {i}")
-        plt.axis('off')
+        st.image(image_path, caption=f"Recommendation {i}", use_column_width=True)
 
-    plt.tight_layout()
-    plt.show()
+def main():
+    st.title("Fashion Item Recommender")
 
-input_image_path = 'women fashion/women fashion/dark, elegant, sleeveless dress that reaches down to about mid-calf.jpg'
-recommend_fashion_items_resnet(input_image_path, all_features, image_paths_list, model, top_n=4)
+    uploaded_file = st.file_uploader("Upload a zip file", type="zip")
+    if uploaded_file:
+        data_path = 'uploaded.zip'
+        with open(data_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        all_features, all_image_names, model, image_paths_list = extract_features_and_paths(data_path)
+
+        st.write("Select an image for recommendation:")
+        selected_image_path = st.selectbox("Select an image", image_paths_list)
+        recommend_fashion_items_resnet(selected_image_path, all_features, all_image_names, model)
+
+if __name__ == "__main__":
+    main()
