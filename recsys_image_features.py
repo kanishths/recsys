@@ -12,14 +12,14 @@ from scipy.spatial.distance import cosine
 
 st.cache_data
 def extract_features_and_paths(data_path):
-    extraction_dir = 'women fashion'
+    extraction_dir = 'womenfashion'
     if not os.path.exists(extraction_dir):
         os.makedirs(extraction_dir)
 
     with ZipFile(data_path, 'r') as zip_ref:
         zip_ref.extractall(extraction_dir)
 
-    image_directory = os.path.join(extraction_dir, '/women fashion')
+    image_directory = os.path.join(extraction_dir, 'womenfashion')
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
@@ -77,7 +77,8 @@ def main():
 
         st.write("Select an image for recommendation:")
         selected_image_path = st.selectbox("Select an image", image_paths_list)
-        recommend_fashion_items_resnet(selected_image_path, all_features, all_image_names, model)
+        input_image_path = selected_image_path
+        recommend_fashion_items_resnet(input_image_path, all_features, all_image_names, model)
 
 if __name__ == "__main__":
     main()
