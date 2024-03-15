@@ -43,6 +43,7 @@ def dataset_creation(data_path):
       input_features = normalized_features
   return input_features, all_features, all_image_names
 
+
 def recsys(input_image_path,input_features, all_features, all_image_names):
   top_n = 5
   image_paths=[]
@@ -54,7 +55,17 @@ def recsys(input_image_path,input_features, all_features, all_image_names):
       image_paths.append(image_path)
   return image_paths
 
-
+def results(input_image_path, input_features, all_features, all_image_names):
+  result = recsys(input_image_path, input_features, all_features, all_image_names)
+  st.write("Displaying Images:")
+  col1, col2, col3, col4, col5 = st.columns(5)
+  cols = [col1, col2, col3, col4, col5]
+  
+  for i, path in enumerate(result):
+      with cols[i]:
+          path = os.path.join('women-fashion/women-fashion',path)
+          image = Image.open(path)
+          st.image(image, caption=path, use_column_width=True)
 
 def main():
     st.title("Fashion Item Recommender")
@@ -66,23 +77,22 @@ def main():
             f.write(uploaded_file.getbuffer())
         st.write("Creating Dataset:")
         input_features, all_features, all_image_names =  dataset_creation(data_path)
-
+        st.write("Dataset Created with ",len(all_image_names)," images")
         st.write("Select an image for recommendation:")
-        selected_image_path = st.selectbox("Select an image", all_image_names)
+        selected_image_path = st.selectbox("Select an image", all_image_names, on_change=results)
         input_image_path = selected_image_path
-        result = recsys(input_image_path, input_features, all_features, all_image_names)
-        st.write("Displaying Images:")
-        col1, col2, col3, col4, col5 = st.columns(5)
-        cols = [col1, col2, col3, col4, col5]
+        results(input_image_path, input_features, all_features, all_image_names)
+
+        # result = recsys(input_image_path, input_features, all_features, all_image_names)
+        # st.write("Displaying Images:")
+        # col1, col2, col3, col4, col5 = st.columns(5)
+        # cols = [col1, col2, col3, col4, col5]
         
-        for i, path in enumerate(result):
-            with cols[i]:
-                path = os.path.join('women-fashion/women-fashion',path)
-                image = Image.open(path)
-                st.image(image, caption=path, use_column_width=True)
-        st.write("Select an image for recommendation:")
-        selected_image_path = st.selectbox("Select an image", image_paths_list)
-        input_image_path = selected_image_path
-
+        # for i, path in enumerate(result):
+        #     with cols[i]:
+        #         path = os.path.join('women-fashion/women-fashion',path)
+        #         image = Image.open(path)
+        #         st.image(image, caption=path, use_column_width=True)
+        
 if __name__ == "__main__":
     main()
