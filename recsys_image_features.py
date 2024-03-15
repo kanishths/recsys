@@ -20,7 +20,7 @@ def extract_features_and_paths(data_path):
         zip_ref.extractall(extraction_dir)
 
     image_directory = os.path.join(extraction_dir, 'womenfashion')
-    print(image_directory)
+    # print(image_directory)
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
@@ -57,7 +57,7 @@ def recommend_fashion_items_resnet(input_image_path, all_features, all_image_nam
 
     similarities = [1 - cosine(input_features, other_feature) for other_feature in all_features]
     similar_indices = np.argsort(similarities)[-top_n:]
-
+    print(input_image_path)
     similar_indices = [idx for idx in similar_indices if idx != all_image_names.index(input_image_path)]
 
     st.image(input_image_path, caption="Input Image", use_column_width=True)
