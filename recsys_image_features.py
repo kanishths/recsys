@@ -35,8 +35,8 @@ def extract_features_and_paths(data_path):
         features = extract_features(model, preprocessed_img)
         all_features.append(features)
         all_image_names.append(os.path.basename(img_path))
-    for feat in all_image_names:
-            print(feat)
+    # for feat in all_image_names:
+    #         print(feat)
     return all_features, all_image_names, model, image_paths_list
 
 def preprocess_image(img_path):
@@ -57,6 +57,10 @@ def recommend_fashion_items_resnet(input_image_path, all_features, all_image_nam
 
     similarities = [1 - cosine(input_features, other_feature) for other_feature in all_features]
     similar_indices = np.argsort(similarities)[-top_n:]
+    print(input_image_path)
+    print("\n")
+    for i in all_image_names:
+        print(i)
     similar_indices = [idx for idx in similar_indices if idx != all_image_names.index(input_image_path)]
 
     st.image(input_image_path, caption="Input Image", use_column_width=True)
