@@ -20,6 +20,7 @@ def extract_features_and_paths(data_path):
         zip_ref.extractall(extraction_dir)
 
     image_directory = os.path.join(extraction_dir, 'womenfashion')
+    print(image_directory)
 
     image_paths_list = [file for file in glob.glob(os.path.join(image_directory, '*.*')) if file.endswith(('.jpg', '.png', '.jpeg', 'webp'))]
 
@@ -34,7 +35,8 @@ def extract_features_and_paths(data_path):
         features = extract_features(model, preprocessed_img)
         all_features.append(features)
         all_image_names.append(os.path.basename(img_path))
-
+        for feat in all_image_names:
+            print(feat)
     return all_features, all_image_names, model, image_paths_list
 
 def preprocess_image(img_path):
